@@ -1,0 +1,5 @@
+# Signing keys never leave the maintainer machine / GitHub Secrets.
+.secrets/
+
+node_modules/
+.DS_Store

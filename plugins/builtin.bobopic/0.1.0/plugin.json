@@ -1,0 +1,35 @@
+{
+  "id": "builtin.bobopic",
+  "name": "BoBoPic",
+  "version": "0.1.0",
+  "apiVersion": 1,
+  "minAppVersion": "1.0.0",
+  "description": "Pixiv 插画与每日榜单，支持搜索、标签与新作列表。",
+  "author": "Iriso",
+  "homepage": "https://bobopic.com/",
+  "languages": [
+    "zh"
+  ],
+  "capabilities": [
+    "featured",
+    "search",
+    "album",
+    "tag"
+  ],
+  "runtime": {
+    "type": "sandbox",
+    "baseUrl": "https://bobopic.com/",
+    "hosts": [
+      "bobopic.com",
+      "go.bobopic.com"
+    ],
+    "script": "script.js",
+    "sha256": "a8f9483348aded05ff429df6b73f3be7cd0ff6a5a384c1b0b0c91a6cda70ae6e"
+  },
+  "settings": [],
+  "changelog": [],
+  "source": {
+    "repo": null,
+    "commit": "7ab6d8289bd7bc9f67a13eabe20743abeab4a88a"
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/iriso/iriso-plugins-market/main/schema/index.schema.json",
+  "title": "Iriso plugin market index",
+  "description": "The single entry point the app downloads. Signed with Ed25519 (index.json.sig).",
+  "type": "object",
+  "required": ["schema", "apiVersion", "plugins"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": { "const": 1 },
+    "apiVersion": { "type": "integer", "minimum": 1 },
+    "plugins": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "version",
+          "apiVersion",
+          "minAppVersion",
+          "capabilities",
+          "languages",
+          "packagePath",
+          "scriptPath",
+          "scriptSha256",
+          "scriptSize"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "version": { "type": "string" },
+          "apiVersion": { "type": "integer" },
+          "minAppVersion": { "type": "string" },
+          "description": { "type": "string" },
+          "author": { "type": "string" },
+          "homepage": { "type": ["string", "null"] },
+          "languages": { "type": "array", "items": { "type": "string" } },
+          "capabilities": { "type": "array", "items": { "type": "string" } },
+          "deprecated": { "type": "boolean" },
+          "packagePath": { "type": "string" },
+          "scriptPath": { "type": "string" },
+          "scriptSha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "scriptSize": { "type": "integer", "minimum": 1 },
+          "packageUrl": { "type": "string" },
+          "scriptUrl": { "type": "string" }
+        }
+      }
+    }
+  }
+}

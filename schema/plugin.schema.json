@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/iriso/iriso-plugins-market/main/schema/plugin.schema.json",
+  "title": "Iriso plugin package",
+  "description": "One immutable plugin version. `scripts/verify-plugin.mjs` implements the same rules and is the source of truth at build time.",
+  "type": "object",
+  "required": [
+    "id",
+    "name",
+    "version",
+    "apiVersion",
+    "minAppVersion",
+    "capabilities",
+    "runtime"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(\\.[a-z0-9][a-z0-9-]*)+$",
+      "description": "Stable primary key. Never changes after the first release: favourites and history store it."
+    },
+    "name": { "type": "string", "minLength": 1, "maxLength": 40 },
+    "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+(-[0-9A-Za-z.-]+)?$" },
+    "apiVersion": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Sandbox contract version (see docs/sandbox-api.md)."
+    },
+    "minAppVersion": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "description": { "type": "string", "maxLength": 200 },
+    "author": { "type": "string", "maxLength": 60 },
+    "homepage": { "type": ["string", "null"], "format": "uri" },
+    "license": { "type": ["string", "null"] },
+    "languages": { "type": "array", "items": { "type": "string" } },
+    "capabilities": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "enum": ["featured", "search", "album", "tag"] },
+      "description": "Must match the endpoints the script actually registers."
+    },
+    "runtime": {
+      "type": "object",
+      "required": ["type", "baseUrl", "hosts", "script", "sha256"],
+      "additionalProperties": false,
+      "properties": {
+        "type": { "const": "sandbox" },
+        "baseUrl": { "type": "string", "format": "uri" },
+        "hosts": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "pattern": "^[a-z0-9.-]+$" },
+          "description": "Network permission: ctx.fetch is rejected for any other host."
+        },
+        "script": { "const": "script.js" },
+        "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      }
+    },
+    "settings": { "type": "array" },
+    "changelog": { "type": "array", "items": { "type": "string" } },
+    "deprecated": { "type": "boolean" },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "repo": { "type": ["string", "null"] },
+        "commit": { "type": ["string", "null"] }
+      }
+    }
+  }
+}

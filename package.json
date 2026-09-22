@@ -1,0 +1,13 @@
+{
+  "name": "iriso-plugins-market",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Static plugin index for Iriso, served straight from GitHub.",
+  "scripts": {
+    "keys:generate": "bun scripts/generate-keys.mjs",
+    "verify": "bun scripts/verify-plugin.mjs",
+    "index": "bun scripts/build-index.mjs && bun scripts/sign-index.mjs",
+    "index:check": "bun scripts/build-index.mjs --check && bun scripts/sign-index.mjs --verify"
+  }
+}
