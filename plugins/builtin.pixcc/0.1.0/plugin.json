@@ -10,6 +10,7 @@
   "languages": [
     "zh"
   ],
+  "icon": "icon.svg",
   "capabilities": [
     "featured",
     "search",
@@ -24,9 +25,18 @@
       "pixcc.net"
     ],
     "script": "script.js",
-    "sha256": "147ba22e5da9f5404beeb0d229380f73b03600f851a7ff3c06948cdce73f9f42"
+    "sha256": "c69aa2634c65caa6129faeaa426eefff9ad72714f97f013c1b3f3b6189965120"
   },
-  "settings": [],
+  "settings": [
+    {
+      "key": "enrichLimit",
+      "label": "详情补全条数",
+      "type": "number",
+      "description": "搜索结果中进详情页补全日期与标签的条数，0 表示不补全（更快）。",
+      "placeholder": "12",
+      "defaultValue": 12
+    }
+  ],
   "changelog": [],
   "source": {
     "repo": null,

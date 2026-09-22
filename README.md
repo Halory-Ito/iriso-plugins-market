@@ -36,9 +36,11 @@ bun run index:check     # CI 用：索引是否与包一致 + 签名是否有效
 
 ## 规则
 
+- **本仓库是插件的唯一源**：App 不内置任何插件，全部从这里下载、安装、更新。
 - **版本不可变**：`<id>@<version>` 一旦提交就不能再改，要改就发新版本（CI 用 `check-published.mjs` 卡住）。
 - **id 不可变**：`pluginId` 是收藏 / 历史 / 已安装记录里的主键，改名会让用户数据失联。`builtin.` 前缀保留给官方随包插件，第三方请用 `community.`。
 - **`hosts` 是权限**：`ctx.fetch` 只允许访问这些域名，更新时新增域名需要用户二次确认。
 - **单文件脚本**：不打包依赖，cheerio/slim 由宿主注入；单次调用 30 秒超时。
+- **每个插件带图标与设置**：`icon.svg` 提供列表图标，`settings` 声明设置页字段，脚本用 `ctx.settings` 读取。
 
 细节见 `docs/sandbox-api.md` 与 `docs/publishing.md`。

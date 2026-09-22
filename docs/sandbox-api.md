@@ -38,6 +38,7 @@
 | `ctx.$(html)` | 用宿主注入的 cheerio/slim 解析 HTML（等价 `ctx.cheerio.load(html)`） |
 | `ctx.cheerio` | cheerio 模块本体 |
 | `ctx.log(...)` | 预留，当前是 no-op |
+| `ctx.settings` | 用户在当前插件设置页里的取值（`plugin.json` 的 `settings` 声明，未设置时为 `{}`） |
 
 `runtime.baseUrl` 只是沙箱文档的 origin，**不参与**白名单判定；要抓哪个域就把它写进 `runtime.hosts`。
 
@@ -89,7 +90,41 @@ interface AlbumPage { items: AlbumItem[]; page: number; pageSize: number; hasMor
 interface ImagePage { items: ImageItem[]; page: number; pageSize: number; hasMore: boolean }
 ```
 
-## 5. 硬性规则
+## 5. 图标与设置
+
+### 图标
+
+包目录里放一个 `icon.svg`，在 `plugin.json` 里用 `"icon": "icon.svg"` 声明。要求：
+
+- 必须是 SVG（App 用 `react-native-svg` 的 `SvgXml` 渲染，不需要位图工具链）；
+- 自带 `viewBox`（建议 64×64），不要在根节点写死 `width`/`height`；
+- 不要依赖外部字体或远程资源；同一份 SVG 会被渲染成 40px 左右的小图标，线条不要过细。
+
+`bun run index` 会把 `iconPath` 写进索引，App 在列表里直接用它。
+
+### 设置
+
+`plugin.json` 的 `settings` 数组就是插件设置页的字段（与 App 的 `PluginSettingField` 一致）：
+
+```json
+"settings": [
+  {
+    "key": "enrichLimit",
+    "label": "详情补全条数",
+    "type": "number",
+    "description": "搜索结果中进详情页补全的条数，0 表示不补全。",
+    "placeholder": "12",
+    "defaultValue": 12
+  }
+]
+```
+
+- `type` 支持 `text` / `number` / `boolean` / `select`（`select` 需提供 `options: [{ label, value }]`）；
+- 脚本里通过 `ctx.settings.<key>` 读取，未设置时用你自己的默认值；
+- **`bun run verify` 会断言每个 key 在脚本里被真正读到**（防止出现“设置页有个永远没用的开关”）；
+- 设置值按插件、按安装实例持久化，更新插件不会清掉用户已填的值。
+
+## 6. 硬性规则
 
 1. **每个 item 必须带 `pluginId`**：聚合层靠它盖章来源、生成 React key、定位插件。
 2. **id 是插件私有的，必须校验归属**：`getImage*` 收到不认识的 id 时返回 `null`。否则其它插件可能拿你的 id 去自己的站点解析，返回一张不属于你的图（线上真实事故：`149712797_p0` 被另一个插件解析成外站原图，直接 401 白屏）。
@@ -98,6 +133,6 @@ interface ImagePage { items: ImageItem[]; page: number; pageSize: number; hasMor
 5. **id 生成规则要可逆**：`getImage` / `getImageOriginal` / `getImageDetail` 都要能从 `imageId` 反推出自己需要抓的页面（例如 `<作品id>_p<页码>`）。
 6. 语言、站点限制尽量写在 `plugin.json` 的 `languages` / `description` 里，方便用户判断。
 
-## 6. 兼容性
+## 7. 兼容性
 
 `apiVersion` 表示沙箱契约版本。宿主只安装 `apiVersion <= 自己支持版本` 的插件，并在 `minAppVersion` 不满足时拒绝安装。

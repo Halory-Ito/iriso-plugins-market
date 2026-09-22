@@ -83,6 +83,7 @@ const plugins = [...latest.values()]
   .map(({ pkg, script }) => {
     const packagePath = `plugins/${pkg.id}/${pkg.version}/plugin.json`;
     const scriptPath = `plugins/${pkg.id}/${pkg.version}/script.js`;
+    const iconPath = pkg.icon ? `plugins/${pkg.id}/${pkg.version}/${pkg.icon}` : null;
 
     return {
       id: pkg.id,
@@ -99,6 +100,7 @@ const plugins = [...latest.values()]
       deprecated: pkg.deprecated === true,
       packagePath,
       scriptPath,
+      ...(iconPath ? { iconPath } : {}),
       scriptSha256: sha256(script),
       scriptSize: byteSize(script),
       ...(baseUrl

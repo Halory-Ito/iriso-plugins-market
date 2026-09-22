@@ -10,6 +10,7 @@
   "languages": [
     "zh"
   ],
+  "icon": "icon.svg",
   "capabilities": [
     "featured",
     "search",
@@ -24,9 +25,17 @@
       "go.bobopic.com"
     ],
     "script": "script.js",
-    "sha256": "a8f9483348aded05ff429df6b73f3be7cd0ff6a5a384c1b0b0c91a6cda70ae6e"
+    "sha256": "f75fbe75ab38bebc85dbf06344e15110a344a58bf9eeb273a10328e5579c5435"
   },
-  "settings": [],
+  "settings": [
+    {
+      "key": "dailyRanking",
+      "label": "加载完整榜单",
+      "type": "boolean",
+      "description": "榜单套图会额外抓取 /daily 页面，图片更全但多一次请求。",
+      "defaultValue": true
+    }
+  ],
   "changelog": [],
   "source": {
     "repo": null,

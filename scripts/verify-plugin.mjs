@@ -10,6 +10,7 @@
  * Usage: bun scripts/verify-plugin.mjs
  */
 import path from 'node:path';
+import { readFile } from 'node:fs/promises';
 
 import {
   CAPABILITY_METHODS,
@@ -57,7 +58,7 @@ function checkPackage(root, dir, errors) {
   const relative = path.relative(root, dir).split(path.sep).join('/');
   const fail = (message) => errors.push(`${relative}: ${message}`);
 
-  return loadPackage(dir).then(({ pkg, script }) => {
+  return loadPackage(dir).then(async ({ pkg, script }) => {
     const [idFromPath, versionFromPath] = relative.split('/').slice(1);
 
     if (!ID_PATTERN.test(pkg.id ?? '')) fail(`invalid id "${pkg.id}"`);
@@ -85,6 +86,47 @@ function checkPackage(root, dir, errors) {
     if (size > MAX_SCRIPT_BYTES) fail(`script is ${size} bytes (max ${MAX_SCRIPT_BYTES})`);
     if (runtime.sha256 !== sha256(script)) {
       fail(`runtime.sha256 does not match script.js (expected ${sha256(script)})`);
+    }
+
+    // Optional icon, rendered by the app with react-native-svg.
+    if (pkg.icon !== undefined) {
+      if (typeof pkg.icon !== 'string' || !pkg.icon.endsWith('.svg')) {
+        fail('icon must point at an .svg file');
+      } else {
+        const icon = await readFile(path.join(dir, pkg.icon), 'utf8').catch(() => null);
+        if (icon === null) fail(`icon file ${pkg.icon} is missing`);
+        else if (!/<svg[\s>]/.test(icon)) fail(`icon file ${pkg.icon} is not an SVG document`);
+      }
+    }
+
+    // Settings are rendered by the app and passed to the script as ctx.settings,
+    // so every declared field must be one the script actually reads.
+    const settings = pkg.settings ?? [];
+    if (!Array.isArray(settings)) {
+      fail('settings must be an array');
+    } else {
+      const keys = new Set();
+
+      for (const field of settings) {
+        if (typeof field?.key !== 'string' || field.key === '') {
+          fail('every setting needs a string key');
+          continue;
+        }
+        if (keys.has(field.key)) fail(`duplicate setting key "${field.key}"`);
+        keys.add(field.key);
+        if (typeof field.label !== 'string' || field.label === '') {
+          fail(`setting "${field.key}" needs a label`);
+        }
+        if (!['text', 'number', 'boolean', 'select'].includes(field.type)) {
+          fail(`setting "${field.key}" has unsupported type "${field.type}"`);
+        }
+        if (field.type === 'select' && !Array.isArray(field.options)) {
+          fail(`select setting "${field.key}" needs options`);
+        }
+        if (!script.includes(field.key)) {
+          fail(`setting "${field.key}" is never read by the script`);
+        }
+      }
     }
 
     for (const [pattern, reason] of FORBIDDEN) {

@@ -90,15 +90,8 @@ bun run keys:generate   # 生成 .secrets/market-signing-key.pem + keys/market-p
 - 想改成 CI 签名：把私钥内容 base64 后放进仓库 Secret `MARKET_SIGNING_KEY`，`sign-index.mjs` 会优先读它。
 - 轮换密钥时同时更新 App 内置公钥，并让 App 支持多 `keyId`（`index.json.sig` 里带 `keyId`）。
 
-## 9. 官方插件（BoBoPic / 次元画册）怎么进来
+## 9. 官方插件（BoBoPic / 次元画册）
 
-它们仍在 iriso app 仓库里开发，用 app 仓库的导出脚本同步过来（保证**只有一份源**）：
+**本仓库就是所有插件的唯一源**：App 不再内置任何插件，用户首次启动是空的，全部从市场安装 / 更新。官方两个插件的脚本、图标、设置都直接在本仓库的 `plugins/` 下维护（它们此前在 iriso App 仓库里开发，已全部迁过来）。
 
-```bash
-# 在 iriso app 仓库执行
-bun run export:plugins --out ../iriso-plugins-market
-# 然后在 market 仓库
-bun run verify && bun run index
-```
-
-导出脚本读取 app 里的 `SandboxPluginDescriptor`（manifest + baseUrl + hosts + script），生成 `plugin.json` / `script.js`，并记录 `source.commit` 便于追溯。
+改官方插件的流程和第三方一样：改 `plugins/<id>/<version>/` → `bun run verify && bun run index` → 提交。要改已发布版本的内容就开新版本目录。

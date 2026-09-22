@@ -47,6 +47,7 @@
           "deprecated": { "type": "boolean" },
           "packagePath": { "type": "string" },
           "scriptPath": { "type": "string" },
+          "iconPath": { "type": ["string", "null"] },
           "scriptSha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
           "scriptSize": { "type": "integer", "minimum": 1 },
           "packageUrl": { "type": "string" },

@@ -8,6 +8,12 @@
   var ENRICH_LIMIT = 12;
   var ENRICH_CONCURRENCY = 4;
 
+  /** Reads a non-negative numeric setting, falling back to the default. */
+  function numberSetting(ctx, key, fallback) {
+    var value = Number(ctx && ctx.settings ? ctx.settings[key] : undefined);
+    return isFinite(value) && value >= 0 ? value : fallback;
+  }
+
   var illustCache = {};
   var albumCache = {};
 
@@ -239,7 +245,8 @@
         '/search?q=' + encodeURIComponent(keyword) + '&page=' + page + '&stype=illust';
 
       var result = await fetchPage(ctx, path);
-      var albums = await enrich(ctx, parseIllustList(result.$), ENRICH_LIMIT);
+      var limit = numberSetting(ctx, 'enrichLimit', ENRICH_LIMIT);
+      var albums = await enrich(ctx, parseIllustList(result.$), limit);
       var hasMore = result.$('a[href*="page="]').length > 0;
 
       return { items: albums, page: page, pageSize: albums.length, hasMore: hasMore };

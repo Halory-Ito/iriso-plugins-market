@@ -355,7 +355,9 @@
       var images = detail.images;
 
       // pixiv \u699C\u5355\u5957\u56FE\uFF1A\u6587\u7AE0\u5185\u53EA\u6709\u9884\u89C8\uFF0C\u5B8C\u6574\u699C\u5355\u5728 /daily?date=...
-      if (detail.rankingUrl) {
+      // Ranking sets: the article only carries previews, the full list lives on
+      // /daily?date=... Users can turn that extra request off in plugin settings.
+      if (detail.rankingUrl && (ctx.settings || {}).dailyRanking !== false) {
         try {
           var $daily = await load(ctx, detail.rankingUrl);
           var dailyImages = parseDailyImages($daily, albumId, detail.album.tags);

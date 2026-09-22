@@ -27,8 +27,9 @@
       "deprecated": false,
       "packagePath": "plugins/builtin.bobopic/0.1.0/plugin.json",
       "scriptPath": "plugins/builtin.bobopic/0.1.0/script.js",
-      "scriptSha256": "a8f9483348aded05ff429df6b73f3be7cd0ff6a5a384c1b0b0c91a6cda70ae6e",
-      "scriptSize": 13042
+      "iconPath": "plugins/builtin.bobopic/0.1.0/icon.svg",
+      "scriptSha256": "f75fbe75ab38bebc85dbf06344e15110a344a58bf9eeb273a10328e5579c5435",
+      "scriptSize": 13253
     },
     {
       "id": "builtin.pixcc",
@@ -55,8 +56,9 @@
       "deprecated": false,
       "packagePath": "plugins/builtin.pixcc/0.1.0/plugin.json",
       "scriptPath": "plugins/builtin.pixcc/0.1.0/script.js",
-      "scriptSha256": "147ba22e5da9f5404beeb0d229380f73b03600f851a7ff3c06948cdce73f9f42",
-      "scriptSize": 11776
+      "iconPath": "plugins/builtin.pixcc/0.1.0/icon.svg",
+      "scriptSha256": "c69aa2634c65caa6129faeaa426eefff9ad72714f97f013c1b3f3b6189965120",
+      "scriptSize": 12102
     }
   ]
 }
