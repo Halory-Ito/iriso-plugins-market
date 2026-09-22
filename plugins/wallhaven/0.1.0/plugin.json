@@ -1,0 +1,136 @@
+{
+  "id": "wallhaven",
+  "name": "Wallhaven",
+  "version": "0.1.0",
+  "apiVersion": 1,
+  "minAppVersion": "1.0.0",
+  "description": "wallhaven.cc 高清壁纸：最新、最热、推荐、搜索与热门标签，可选 API Key 解锁 NSFW。",
+  "author": "Iriso",
+  "homepage": "https://wallhaven.cc/",
+  "languages": [
+    "en"
+  ],
+  "icon": "icon.svg",
+  "capabilities": [
+    "featured",
+    "search",
+    "album",
+    "tag"
+  ],
+  "runtime": {
+    "type": "sandbox",
+    "baseUrl": "https://wallhaven.cc/",
+    "hosts": [
+      "wallhaven.cc"
+    ],
+    "script": "script.js",
+    "sha256": "6cd5ff88f7d5c6d23da8c52d9a1b7812d8f95f28c82c65a0cdbe1afadb91be1d"
+  },
+  "settings": [
+    {
+      "key": "apiKey",
+      "label": "API Key",
+      "type": "text",
+      "description": "可选。填写 wallhaven 账号的 API Key 后可搜索 NSFW 内容并提升配额，留空时服务端只返回 SFW。",
+      "placeholder": "在 wallhaven.cc 的账号设置里获取"
+    },
+    {
+      "key": "purity",
+      "label": "内容分级",
+      "type": "select",
+      "description": "非 SFW 需要 API Key，否则服务端只会返回 SFW 结果。",
+      "defaultValue": "100",
+      "options": [
+        {
+          "label": "SFW",
+          "value": "100"
+        },
+        {
+          "label": "SFW + Sketchy",
+          "value": "110"
+        },
+        {
+          "label": "全部",
+          "value": "111"
+        }
+      ]
+    },
+    {
+      "key": "categories",
+      "label": "壁纸分类",
+      "type": "select",
+      "description": "对应 wallhaven 的 General / Anime / People 三类。",
+      "defaultValue": "111",
+      "options": [
+        {
+          "label": "全部",
+          "value": "111"
+        },
+        {
+          "label": "General",
+          "value": "100"
+        },
+        {
+          "label": "Anime",
+          "value": "010"
+        },
+        {
+          "label": "People",
+          "value": "001"
+        }
+      ]
+    },
+    {
+      "key": "topRange",
+      "label": "最热榜单周期",
+      "type": "select",
+      "description": "「最热」使用 wallhaven Top List，周期越短越新。",
+      "defaultValue": "1M",
+      "options": [
+        {
+          "label": "1 天",
+          "value": "1d"
+        },
+        {
+          "label": "3 天",
+          "value": "3d"
+        },
+        {
+          "label": "1 周",
+          "value": "1w"
+        },
+        {
+          "label": "1 月",
+          "value": "1M"
+        },
+        {
+          "label": "3 月",
+          "value": "3M"
+        },
+        {
+          "label": "6 月",
+          "value": "6M"
+        },
+        {
+          "label": "1 年",
+          "value": "1y"
+        }
+      ]
+    },
+    {
+      "key": "enrichLimit",
+      "label": "搜索补全条数",
+      "type": "number",
+      "description": "搜索结果里额外请求详情以补全标签的条数，0 表示不补全（更快）。",
+      "placeholder": "12",
+      "defaultValue": 12
+    }
+  ],
+  "changelog": [
+    "首个版本：最新 / 最热 / 推荐、关键词搜索、热门标签、原图与详情。"
+  ],
+  "source": {
+    "repo": null,
+    "commit": null
+  }
+}

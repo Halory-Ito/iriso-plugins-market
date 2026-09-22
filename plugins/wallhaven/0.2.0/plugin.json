@@ -1,0 +1,125 @@
+{
+  "id": "wallhaven",
+  "name": "Wallhaven",
+  "version": "0.2.0",
+  "apiVersion": 1,
+  "minAppVersion": "1.0.0",
+  "description": "wallhaven.cc 高清壁纸：最新、最热、推荐、搜索与热门标签，内容分级跟随 App 全局设置。",
+  "author": "Iriso",
+  "homepage": "https://wallhaven.cc/",
+  "languages": [
+    "en"
+  ],
+  "icon": "icon.svg",
+  "capabilities": [
+    "featured",
+    "search",
+    "album",
+    "tag"
+  ],
+  "runtime": {
+    "type": "sandbox",
+    "baseUrl": "https://wallhaven.cc/",
+    "hosts": [
+      "wallhaven.cc"
+    ],
+    "script": "script.js",
+    "sha256": "b898aa7d093064d578b9a2dcbfc8e21e2bdc183781971b45bbb1a64e7677fa84"
+  },
+  "settings": [
+    {
+      "key": "contentRating",
+      "kind": "standard"
+    },
+    {
+      "key": "apiKey",
+      "label": "API Key",
+      "type": "secret",
+      "description": "可选。填写 wallhaven 账号的 API Key 后可搜索 NSFW 内容并提升配额，留空时服务端只返回 SFW。",
+      "placeholder": "在 wallhaven.cc 的账号设置里获取",
+      "section": "network",
+      "isSecret": true
+    },
+    {
+      "key": "categories",
+      "label": "壁纸分类",
+      "type": "select",
+      "description": "对应 wallhaven 的 General / Anime / People 三类。",
+      "defaultValue": "111",
+      "options": [
+        {
+          "label": "全部",
+          "value": "111"
+        },
+        {
+          "label": "General",
+          "value": "100"
+        },
+        {
+          "label": "Anime",
+          "value": "010"
+        },
+        {
+          "label": "People",
+          "value": "001"
+        }
+      ]
+    },
+    {
+      "key": "topRange",
+      "label": "最热榜单周期",
+      "type": "select",
+      "description": "「最热」使用 wallhaven Top List，周期越短越新。",
+      "defaultValue": "1M",
+      "options": [
+        {
+          "label": "1 天",
+          "value": "1d"
+        },
+        {
+          "label": "3 天",
+          "value": "3d"
+        },
+        {
+          "label": "1 周",
+          "value": "1w"
+        },
+        {
+          "label": "1 月",
+          "value": "1M"
+        },
+        {
+          "label": "3 月",
+          "value": "3M"
+        },
+        {
+          "label": "6 月",
+          "value": "6M"
+        },
+        {
+          "label": "1 年",
+          "value": "1y"
+        }
+      ]
+    },
+    {
+      "key": "enrichLimit",
+      "label": "搜索补全条数",
+      "type": "number",
+      "description": "搜索结果里额外请求详情以补全标签的条数，0 表示不补全（更快）。",
+      "placeholder": "12",
+      "defaultValue": 12,
+      "min": 0,
+      "max": 50
+    }
+  ],
+  "changelog": [
+    "内容分级改用宿主标准项 contentRating（sfw / suggestive / mixed / nsfw → purity 位掩码），不再自带 purity 选项",
+    "API Key 改为密文输入（secret）",
+    "详情补全条数加上 0-50 的范围限制"
+  ],
+  "source": {
+    "repo": null,
+    "commit": null
+  }
+}
