@@ -1,0 +1,4 @@
+# Plugin scripts are hashed byte-for-byte, so line endings must be LF everywhere.
+# Without this, a Windows editor writing CRLF would change the script hash and the
+# app would reject the package.
+* text=auto eol=lf

@@ -76,7 +76,11 @@ bun run verify && bun run index
 
 `hosts` 是插件的网络权限。**新增域名属于权限扩张**：App 在更新时会向用户展示 diff 并二次确认，所以不要顺手把无关域名塞进去。
 
-## 7. 签名密钥
+## 7. 行尾必须是 LF
+
+脚本按**字节**哈希（`runtime.sha256` / `scriptSha256`），CRLF 会让哈希对不上、App 直接拒绝安装。仓库已用 `.gitattributes`（`* text=auto eol=lf`）固定；如果本地改过行尾，跑一次 `git add --renormalize .` 再 `bun run index`。
+
+## 8. 签名密钥
 
 ```bash
 bun run keys:generate   # 生成 .secrets/market-signing-key.pem + keys/market-public.pem
@@ -86,7 +90,7 @@ bun run keys:generate   # 生成 .secrets/market-signing-key.pem + keys/market-p
 - 想改成 CI 签名：把私钥内容 base64 后放进仓库 Secret `MARKET_SIGNING_KEY`，`sign-index.mjs` 会优先读它。
 - 轮换密钥时同时更新 App 内置公钥，并让 App 支持多 `keyId`（`index.json.sig` 里带 `keyId`）。
 
-## 8. 官方插件（BoBoPic / 次元画册）怎么进来
+## 9. 官方插件（BoBoPic / 次元画册）怎么进来
 
 它们仍在 iriso app 仓库里开发，用 app 仓库的导出脚本同步过来（保证**只有一份源**）：
 
