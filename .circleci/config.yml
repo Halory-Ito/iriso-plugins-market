@@ -1,0 +1,60 @@
+version: 2.1
+
+jobs:
+  verify:
+    docker:
+      - image: cimg/base:current
+    steps:
+      - checkout:
+          # The published-version check diffs against the base commit, so the
+          # checkout must not be blobless.
+          method: full
+
+      - run:
+          name: Resolve the base commit for change detection
+          command: |
+            base=""
+            if git fetch --no-tags --quiet origin main; then
+              base=$(git merge-base HEAD FETCH_HEAD)
+            fi
+            echo "export BASE_SHA=$base" >> "$BASH_ENV"
+            echo "Base commit: ${base:-<none>}"
+
+      - run:
+          name: Skip when only the generated index changed
+          command: |
+            [ -n "$BASE_SHA" ] || exit 0
+            changed=$(git diff --name-only "$BASE_SHA" HEAD)
+            [ -n "$changed" ] || exit 0
+            rest=$(printf '%s\n' "$changed" | grep -v -x -e 'index.json' -e 'index.json.sig' || true)
+            if [ -z "$rest" ]; then
+              echo "Only index.json / index.json.sig changed - nothing to verify."
+              circleci-agent step halt
+            fi
+
+      - run:
+          name: Install Bun
+          command: |
+            command -v unzip >/dev/null 2>&1 || { sudo apt-get update -qq && sudo apt-get install -y -qq unzip; }
+            curl -fsSL https://bun.sh/install | bash
+            echo 'export PATH="$HOME/.bun/bin:$PATH"' >> "$BASH_ENV"
+
+      - run:
+          name: Verify packages (metadata, sandbox compliance, hashes)
+          command: bun run verify
+
+      - run:
+          name: Check that index.json matches the packages
+          command: bun run index:check
+
+      - run:
+          name: Reject edits to an already published version
+          command: bun scripts/check-published.mjs --against "${BASE_SHA:-origin/main}"
+
+workflows:
+  build-index:
+    jobs:
+      - verify:
+          filters:
+            tags:
+              ignore: /.*/

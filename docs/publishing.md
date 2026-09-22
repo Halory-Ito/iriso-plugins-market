@@ -56,7 +56,7 @@ bun run index      # 写回 sha256、生成 index.json、签名
 
 ## 4. 提交
 
-提交 `plugins/…` 以及重新生成的 `index.json` + `index.json.sig`。CI（`.github/workflows/build-index.yaml`）会：
+提交 `plugins/…` 以及重新生成的 `index.json` + `index.json.sig`。CI（CircleCI，配置在 `.circleci/config.yml`）会：
 
 1. `bun run verify`；
 2. `bun run index:check`（索引是否与包一致、签名是否有效）；
@@ -87,7 +87,7 @@ bun run keys:generate   # 生成 .secrets/market-signing-key.pem + keys/market-p
 ```
 
 - 私钥 `.secrets/market-signing-key.pem` **绝不提交**（已在 `.gitignore`），App 只内置 `keys/market-public.pem`。
-- 想改成 CI 签名：把私钥内容 base64 后放进仓库 Secret `MARKET_SIGNING_KEY`，`sign-index.mjs` 会优先读它。
+- 想改成 CI 签名：把私钥内容 base64 后放进 CircleCI 项目的环境变量 `MARKET_SIGNING_KEY`，`sign-index.mjs` 会优先读它。
 - 轮换密钥时同时更新 App 内置公钥，并让 App 支持多 `keyId`（`index.json.sig` 里带 `keyId`）。
 
 ## 9. 官方插件（BoBoPic / 次元画册）
