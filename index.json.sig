@@ -1,5 +1,5 @@
 {
   "alg": "ed25519",
   "keyId": "iriso-market-1",
-  "sig": "ZLUz7LYUwnphTTa5wzLGWxkiGx2yE79Hw3Xe6xtcz0W0mDP8IGXhuV/z8u0FDBYvstW7wB5t00r1FENtRpkpDA=="
+  "sig": "6fOpCC2c85b5VBvy/j/5kEHrW+KQdWkV/hjJycYsLQajBFVg8REovnrJGyKCd8DC7jgJMozD3zuoJPcNi6E+Cw=="
 }

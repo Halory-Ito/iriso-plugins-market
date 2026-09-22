@@ -21,6 +21,7 @@
           "minAppVersion",
           "capabilities",
           "languages",
+          "hosts",
           "packagePath",
           "scriptPath",
           "scriptSha256",
@@ -38,6 +39,11 @@
           "homepage": { "type": ["string", "null"] },
           "languages": { "type": "array", "items": { "type": "string" } },
           "capabilities": { "type": "array", "items": { "type": "string" } },
+          "hosts": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Network permission, mirrored from the package so the app can show it before installing."
+          },
           "deprecated": { "type": "boolean" },
           "packagePath": { "type": "string" },
           "scriptPath": { "type": "string" },

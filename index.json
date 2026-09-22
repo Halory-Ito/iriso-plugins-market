@@ -20,6 +20,10 @@
         "album",
         "tag"
       ],
+      "hosts": [
+        "bobopic.com",
+        "go.bobopic.com"
+      ],
       "deprecated": false,
       "packagePath": "plugins/builtin.bobopic/0.1.0/plugin.json",
       "scriptPath": "plugins/builtin.bobopic/0.1.0/script.js",
@@ -43,6 +47,10 @@
         "search",
         "album",
         "tag"
+      ],
+      "hosts": [
+        "www.pixcc.net",
+        "pixcc.net"
       ],
       "deprecated": false,
       "packagePath": "plugins/builtin.pixcc/0.1.0/plugin.json",

@@ -95,6 +95,7 @@ const plugins = [...latest.values()]
       homepage: pkg.homepage ?? null,
       languages: pkg.languages ?? [],
       capabilities: pkg.capabilities,
+      hosts: pkg.runtime.hosts,
       deprecated: pkg.deprecated === true,
       packagePath,
       scriptPath,
