@@ -23,7 +23,32 @@ import {
   sha256,
 } from './lib/packages.mjs';
 
-const ID_PATTERN = /^[a-z0-9]+(\.[a-z0-9][a-z0-9-]*)+$/;
+/**
+ * Plugin ids: lowercase segments joined by `-` or `.`, e.g. `wallhaven`,
+ * `my-plugin`, `com.example.wallhaven`.
+ *
+ * There is deliberately no `builtin.` / `community.` prefix: the market no
+ * longer separates first- from third-party packages.
+ */
+const ID_PATTERN = /^[a-z0-9]+(-[a-z0-9]+)*(\.[a-z0-9]+(-[a-z0-9]+)*)*$/;
+
+/**
+ * Standard setting keys the host owns (mirrors the app's
+ * `features/plugins/settings/catalog.ts`; keep the two lists in sync).
+ *
+ * A package that declares one of these opts into the host's control, wording and
+ * value domain — it supplies no `label` / `type` of its own.
+ */
+const STANDARD_SETTING_KEYS = ['contentRating', 'endpoints', 'imageQuality', 'pageSize'];
+
+/** Field types the host can render for plugin-specific settings. */
+const SETTING_TYPES = ['text', 'number', 'boolean', 'select', 'secret', 'textarea', 'json'];
+
+/** Settings-page sections; empty ones are not rendered. */
+const SETTING_SECTIONS = ['content', 'network', 'quality', 'advanced'];
+
+/** `builtin.` / `community.` were retired with the source-prefix convention. */
+const RETIRED_ID_PREFIX = /^(builtin|community)\./;
 const SEMVER_PATTERN = /^\d+\.\d+\.\d+(-[0-9A-Za-z.-]+)?$/;
 const HOST_PATTERN = /^[a-z0-9.-]+$/;
 
@@ -62,6 +87,9 @@ function checkPackage(root, dir, errors) {
     const [idFromPath, versionFromPath] = relative.split('/').slice(1);
 
     if (!ID_PATTERN.test(pkg.id ?? '')) fail(`invalid id "${pkg.id}"`);
+    if (RETIRED_ID_PREFIX.test(pkg.id ?? '')) {
+      fail(`id "${pkg.id}" uses a retired "builtin." / "community." prefix`);
+    }
     if (pkg.id !== idFromPath) fail(`directory id "${idFromPath}" != manifest id "${pkg.id}"`);
     if (!SEMVER_PATTERN.test(pkg.version ?? '')) fail(`invalid version "${pkg.version}"`);
     if (pkg.version !== versionFromPath) fail(`directory version != manifest version`);
@@ -114,14 +142,37 @@ function checkPackage(root, dir, errors) {
         }
         if (keys.has(field.key)) fail(`duplicate setting key "${field.key}"`);
         keys.add(field.key);
-        if (typeof field.label !== 'string' || field.label === '') {
-          fail(`setting "${field.key}" needs a label`);
+
+        // A standard key is owned by the host: no label / type of its own.
+        if (field.kind === 'standard') {
+          if (!STANDARD_SETTING_KEYS.includes(field.key)) {
+            fail(`standard setting "${field.key}" is not in the host catalog`);
+          }
+        } else {
+          if (typeof field.label !== 'string' || field.label === '') {
+            fail(`setting "${field.key}" needs a label`);
+          }
+          if (!SETTING_TYPES.includes(field.type)) {
+            fail(`setting "${field.key}" has unsupported type "${field.type}"`);
+          }
+          if (field.type === 'select' && !Array.isArray(field.options)) {
+            fail(`select setting "${field.key}" needs options`);
+          }
         }
-        if (!['text', 'number', 'boolean', 'select'].includes(field.type)) {
-          fail(`setting "${field.key}" has unsupported type "${field.type}"`);
+
+        if (field.section !== undefined && !SETTING_SECTIONS.includes(field.section)) {
+          fail(`setting "${field.key}" has unknown section "${field.section}"`);
         }
-        if (field.type === 'select' && !Array.isArray(field.options)) {
-          fail(`select setting "${field.key}" needs options`);
+        if (field.visibleWhen !== undefined) {
+          const gate = field.visibleWhen;
+          if (typeof gate?.key !== 'string' || !('equals' in gate)) {
+            fail(`setting "${field.key}" needs visibleWhen { key, equals }`);
+          } else if (!settings.some((other) => other?.key === gate.key)) {
+            fail(`setting "${field.key}" gates on undeclared key "${gate.key}"`);
+          }
+        }
+        if (field.min !== undefined && field.max !== undefined && field.min > field.max) {
+          fail(`setting "${field.key}" has min > max`);
         }
         if (!script.includes(field.key)) {
           fail(`setting "${field.key}" is never read by the script`);

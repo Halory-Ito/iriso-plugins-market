@@ -1,5 +1,5 @@
 {
-  "id": "builtin.pixcc",
+  "id": "pixcc",
   "name": "次元画册",
   "version": "0.1.0",
   "apiVersion": 1,
@@ -25,7 +25,7 @@
       "pixcc.net"
     ],
     "script": "script.js",
-    "sha256": "c69aa2634c65caa6129faeaa426eefff9ad72714f97f013c1b3f3b6189965120"
+    "sha256": "20deb15fc2985ed13d6b269fc5553207ae49b2b76f54f3072993b3e7f84ced4b"
   },
   "settings": [
     {

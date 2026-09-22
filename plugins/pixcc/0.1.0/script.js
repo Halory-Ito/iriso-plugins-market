@@ -2,7 +2,7 @@
 (function () {
   var BASE = 'https://www.pixcc.net';
   var CDN = 'https://cdn.pixcc.net';
-  var PLUGIN_ID = 'builtin.pixcc';
+  var PLUGIN_ID = 'pixcc';
 
   // \u8BE6\u60C5\u9875\u7EA6 260KB\uFF0C\u53EA\u4E3A\u641C\u7D22\u7ED3\u679C\u7684\u524D\u82E5\u5E72\u6761\u8865\u5168\u65E5\u671F/\u6807\u7B7E\u3002
   var ENRICH_LIMIT = 12;

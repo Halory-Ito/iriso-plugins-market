@@ -17,8 +17,9 @@
   "properties": {
     "id": {
       "type": "string",
-      "pattern": "^[a-z0-9]+(\\.[a-z0-9][a-z0-9-]*)+$",
-      "description": "Stable primary key. Never changes after the first release: favourites and history store it."
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(\\.[a-z0-9]+(-[a-z0-9]+)*)*$",
+      "not": { "pattern": "^(builtin|community)\\." },
+      "description": "Stable primary key, e.g. `wallhaven` or `com.example.wallhaven`. The retired `builtin.` / `community.` prefixes are rejected. Never changes after the first release: favourites and history store it."
     },
     "name": { "type": "string", "minLength": 1, "maxLength": 40 },
     "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+(-[0-9A-Za-z.-]+)?$" },
@@ -63,15 +64,21 @@
     },
     "settings": {
       "type": "array",
-      "description": "Fields rendered on the plugin settings page and passed to the script as ctx.settings.",
+      "description": "Fields rendered on the plugin settings page and passed to the script as ctx.settings. Two flavours: `kind: \"standard\"` opts into a host-owned concept (label, control and value domain come from the app's catalog — see docs/sandbox-api.md), anything else is a plugin-specific field and needs `label` + `type`.",
       "items": {
         "type": "object",
-        "required": ["key", "label", "type"],
+        "required": ["key"],
         "additionalProperties": false,
         "properties": {
           "key": { "type": "string", "minLength": 1 },
+          "kind": {
+            "enum": ["standard", "custom"],
+            "description": "`standard` = a host-owned concept; the host supplies the label, control and allowed values."
+          },
           "label": { "type": "string", "minLength": 1 },
-          "type": { "enum": ["text", "number", "boolean", "select"] },
+          "type": {
+            "enum": ["text", "number", "boolean", "select", "secret", "textarea", "json"]
+          },
           "description": { "type": "string" },
           "placeholder": { "type": "string" },
           "defaultValue": { "type": ["string", "number", "boolean", "null"] },
@@ -86,8 +93,46 @@
                 "value": { "type": "string" }
               }
             }
+          },
+          "section": {
+            "enum": ["content", "network", "quality", "advanced"],
+            "description": "Section of the settings page; defaults to `advanced`. Empty sections are not rendered."
+          },
+          "visibleWhen": {
+            "type": "object",
+            "required": ["key", "equals"],
+            "additionalProperties": false,
+            "properties": {
+              "key": { "type": "string", "minLength": 1 },
+              "equals": { "type": ["string", "number", "boolean", "null"] }
+            },
+            "description": "Hide the field unless another setting currently has this value."
+          },
+          "isSecret": {
+            "type": "boolean",
+            "description": "Masks the input (use `type: \"secret\"` for the same effect)."
+          },
+          "required": { "type": "boolean" },
+          "min": { "type": "number" },
+          "max": { "type": "number" }
+        },
+        "allOf": [
+          {
+            "if": {
+              "required": ["kind"],
+              "properties": { "kind": { "const": "standard" } }
+            },
+            "then": {
+              "properties": {
+                "key": {
+                  "enum": ["contentRating", "endpoints", "imageQuality", "pageSize"],
+                  "description": "Standard keys the host knows how to render (docs/sandbox-api.md §5)."
+                }
+              }
+            },
+            "else": { "required": ["label", "type"] }
           }
-        }
+        ]
       }
     },
     "changelog": { "type": "array", "items": { "type": "string" } },

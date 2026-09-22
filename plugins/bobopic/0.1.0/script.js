@@ -1,7 +1,7 @@
 
 (function () {
   var BASE = 'https://bobopic.com';
-  var PLUGIN_ID = 'builtin.bobopic';
+  var PLUGIN_ID = 'bobopic';
   var PAGE_SIZE = 24;
   var ENRICH_CONCURRENCY = 6;
 

@@ -1,5 +1,5 @@
 {
-  "id": "builtin.bobopic",
+  "id": "bobopic",
   "name": "BoBoPic",
   "version": "0.1.0",
   "apiVersion": 1,
@@ -25,7 +25,7 @@
       "go.bobopic.com"
     ],
     "script": "script.js",
-    "sha256": "f75fbe75ab38bebc85dbf06344e15110a344a58bf9eeb273a10328e5579c5435"
+    "sha256": "24d4d70755c2e58a63f3d77d7a80be4664deca5d0ab9bab766360e9845ccedd7"
   },
   "settings": [
     {

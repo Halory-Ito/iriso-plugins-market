@@ -34,7 +34,12 @@ const published = new Set(
     .filter(Boolean)
 );
 
-const changed = (git(['diff', '--name-only', base, 'HEAD', '--', 'plugins/']) ?? '')
+// Deletions are ignored: removing or renaming a package does not change the
+// bytes a user already cached, and without this an id rename (e.g. dropping a
+// `builtin.` prefix) would be impossible.
+const changed = (
+  git(['diff', '--name-only', '--diff-filter=d', base, 'HEAD', '--', 'plugins/']) ?? ''
+)
   .split('\n')
   .filter(Boolean);
 

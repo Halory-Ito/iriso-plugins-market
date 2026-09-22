@@ -8,14 +8,14 @@ plugins/<id>/<version>/
 └─ script.js        # 单文件沙箱脚本（见 docs/sandbox-api.md）
 ```
 
-`<id>` 规则：小写反向域名（`community.example`）。**`builtin.` 前缀保留给官方随包插件，第三方请用 `community.`。**
+`<id>` 规则：小写，用 `-` / `.` 分隔（`wallhaven`、`my-plugin`、`com.example.wallhaven`）。**市场不再区分官方与第三方，`builtin.` / `community.` 前缀已弃用并被 `bun run verify` 拒绝。**
 `<version>` 是 semver，目录名必须与 `plugin.json` 的 `version` 完全一致。
 
 ## 2. 写 `plugin.json`
 
 ```json
 {
-  "id": "community.example",
+  "id": "example",
   "name": "Example",
   "version": "1.0.0",
   "apiVersion": 1,
@@ -60,17 +60,21 @@ bun run index      # 写回 sha256、生成 index.json、签名
 
 1. `bun run verify`；
 2. `bun run index:check`（索引是否与包一致、签名是否有效）；
-3. 拒绝修改**已发布版本**（要改就发新版本）。
+3. 拒绝修改**已发布版本**的已有文件（删除 / 改名不算修改；要改内容就发新版本）。
 
 ## 5. 发新版本
 
 ```bash
-cp -r plugins/community.example/1.0.0 plugins/community.example/1.0.1
+cp -r plugins/example/1.0.0 plugins/example/1.0.1
 # 改 plugin.json 的 version / changelog，改 script.js
 bun run verify && bun run index
 ```
 
 索引里每个插件只列**最高版本**；旧版本目录保留在仓库里，方便 App 固定或回滚。
+
+**改了 `settings` 也要发新版本**：App 在安装时把设置 schema 写进安装记录，并且只在「市场版本号 > 已安装版本号」时才重新拉包——同一个版本号下改设置，已安装用户永远看不到新表单。
+
+用了**标准项**（`kind: "standard"`）的包，同时要把 `minAppVersion` 提到支持该目录的 App 版本；否则旧版 App 会把标准项当成普通字段渲染（没有标签的输入框）。
 
 ## 6. `hosts` 权限变更
 
@@ -90,8 +94,8 @@ bun run keys:generate   # 生成 .secrets/market-signing-key.pem + keys/market-p
 - 想改成 CI 签名：把私钥内容 base64 后放进 CircleCI 项目的环境变量 `MARKET_SIGNING_KEY`，`sign-index.mjs` 会优先读它。
 - 轮换密钥时同时更新 App 内置公钥，并让 App 支持多 `keyId`（`index.json.sig` 里带 `keyId`）。
 
-## 9. 官方插件（BoBoPic / 次元画册）
+## 9. 仓库里的插件
 
-**本仓库就是所有插件的唯一源**：App 不再内置任何插件，用户首次启动是空的，全部从市场安装 / 更新。官方两个插件的脚本、图标、设置都直接在本仓库的 `plugins/` 下维护（它们此前在 iriso App 仓库里开发，已全部迁过来）。
+**本仓库就是所有插件的唯一源**：App 不内置任何插件，用户首次启动是空的，全部从市场安装 / 更新。仓库里现有插件的脚本、图标、设置都直接在本仓库的 `plugins/` 下维护（它们此前在 iriso App 仓库里开发，已全部迁过来）。
 
-改官方插件的流程和第三方一样：改 `plugins/<id>/<version>/` → `bun run verify && bun run index` → 提交。要改已发布版本的内容就开新版本目录。
+所有包的发布流程完全一样：改 `plugins/<id>/<version>/` → `bun run verify && bun run index` → 提交。要改已发布版本的内容就开新版本目录。
